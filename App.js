@@ -94,7 +94,7 @@ const App = ({dificuldade}) => {
     }
   };
 
-  if (voltar) {
+  if (voltar) { //se voltar é verdadeiro então chamar tela iniciar
     return <Iniciar />
   }
 
