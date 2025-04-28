@@ -7,13 +7,17 @@ const Iniciar = () => {
   const onPress = (dif) => setDif(prevDif => dif)
 
   if (dif != "") {
-    return <App dificuldade={dif}></App>; // Renderiza o componente `App` quando o estado `showGame` for verdadeiro
+    return <App dificuldade={dif}></App>;
   }
   
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.countContainer}>
+      <SafeAreaView style={styles.containerInicial}>
+        <View>
+          <Text style={styles.titulo}>Jogo da Memória</Text>
+        </View>
+
+        <View style={styles.containerDif}>
           <TouchableOpacity style={styles.button} onPress={() => onPress("facil")}>
             <Text id="facil">Fácil</Text>
           </TouchableOpacity>
@@ -36,24 +40,37 @@ const App = ({dificuldade}) => {
   const [voltar, setVoltar] = useState(false);
 
   const images = [
-    { id: 0, source: require('./assets/virada.png'), name: 'zelda1', match: false},
-    { id: 1, source: require('./assets/virada.png'), name: 'zelda1', match: false},
-    { id: 2, source: require('./assets/virada.png'), name: 'zelda2', match: false},
-    { id: 3, source: require('./assets/virada.png'), name: 'zelda2', match: false},
-    { id: 4, source: require('./assets/virada.png'), name: 'zelda3', match: false},
-    { id: 5, source: require('./assets/virada.png'), name: 'zelda3', match: false},
-    { id: 6, source: require('./assets/virada.png'), name: 'zelda4', match: false},
-    { id: 7, source: require('./assets/virada.png'), name: 'zelda4', match: false},
+    { id: 0, source: require('./assets/virada.png'), name: 'anya', match: false},
+    { id: 1, source: require('./assets/virada.png'), name: 'anya', match: false},
+    { id: 2, source: require('./assets/virada.png'), name: 'ford', match: false},
+    { id: 3, source: require('./assets/virada.png'), name: 'ford', match: false},
+    { id: 4, source: require('./assets/virada.png'), name: 'yor', match: false},
+    { id: 5, source: require('./assets/virada.png'), name: 'yor', match: false},
+    { id: 6, source: require('./assets/virada.png'), name: 'dog', match: false},
+    { id: 7, source: require('./assets/virada.png'), name: 'dog', match: false},
+    { id: 8, source: require('./assets/virada.png'), name: 'informante', match: false},
+    { id: 9, source: require('./assets/virada.png'), name: 'informante', match: false},
+    { id: 10, source: require('./assets/virada.png'), name: 'damian', match: false},
+    { id: 11, source: require('./assets/virada.png'), name: 'damian', match: false},
+    { id: 12, source: require('./assets/virada.png'), name: 'brother', match: false},
+    { id: 13, source: require('./assets/virada.png'), name: 'brother', match: false},
+    { id: 14, source: require('./assets/virada.png'), name: 'anya2', match: false},
+    { id: 15, source: require('./assets/virada.png'), name: 'anya2', match: false},
+    { id: 16, source: require('./assets/virada.png'), name: 'fiona', match: false},
+    { id: 17, source: require('./assets/virada.png'), name: 'fiona', match: false},
+    { id: 18, source: require('./assets/virada.png'), name: 'sylvia', match: false},
+    { id: 19, source: require('./assets/virada.png'), name: 'sylvia', match: false},
+    // { id: 20, source: require('./assets/virada.png'), name: 'family', match: false},
+    // { id: 21, source: require('./assets/virada.png'), name: 'family', match: false}
   ];
 
-  //const ImagensEmbaralhadas = [images[0], images[0], images[1], images[1], images[2], images[2], images[3], images[3]].sort(() => Math.random() - 0.5); 
   const ImagensEmbaralhadas = useMemo(() => {
     if (dificuldade === 'facil') {
-      return images.slice(0, 4).sort(() => Math.random() - 0.5); // Apenas 4 imagens
+      return images.slice(0, 12).sort(() => Math.random() - 0.5);
     } else if (dificuldade === 'medio') {
-      return images.slice(0, 6).sort(() => Math.random() - 0.5); // Apenas 6 imagens
+      return images.slice(0, 16).sort(() => Math.random() - 0.5);
     } else if (dificuldade === 'dificil') {
-      return images.sort(() => Math.random() - 0.5); // Todas as 8 imagens
+      return images.sort(() => Math.random() - 0.5);
     }
   }, [dificuldade]);
 
@@ -67,34 +84,30 @@ const App = ({dificuldade}) => {
       setVoltar(true);
     }
     else if (!firstImage && !clickedImage.match) {
-      // Se nenhuma imagem foi clicada antes, armazene a atual
       setFirstImage(clickedImage);
       img = ImagensEmbaralhadas.find(image => image.id === clickedImage.id);
-      img.source = { uri: '/assets/?unstable_path=.%2Fassets/' + img.name + '.jpeg' };
+      img.source = { uri: '/assets/?unstable_path=.%2Fassets/' + img.name + '.png' };
     }
     else if (clickedImage.source.uri == sourceVirada) {
-      // Se já houver uma imagem armazenada, compare
       if (firstImage.name === clickedImage.name) {
-        ImagensEmbaralhadas.find(image => image.id === clickedImage.id).source = { uri: '/assets/?unstable_path=.%2Fassets/' + clickedImage.name + '.jpeg' };
+        ImagensEmbaralhadas.find(image => image.id === clickedImage.id).source = { uri: '/assets/?unstable_path=.%2Fassets/' + clickedImage.name + '.png' };
         ImagensEmbaralhadas.filter(image => image.name.includes(firstImage.name))[0].match = true;
         ImagensEmbaralhadas.filter(image => image.name.includes(firstImage.name))[1].match = true;
       } else {
         console.log("As imagens não combinam!");
         ImagensEmbaralhadas.find(image => image.id === firstImage.id).source = { uri: '/assets/?unstable_path=.%2Fassets/virada.png' }
       }
-      // Reseta o estado para permitir novas comparações
       setFirstImage(null);
     }
     else if (!clickedImage.match) {
       console.log("Esta imagem ja foi selecionada");
     }
     else {
-      setFirstImage(null);
       console.log("Esta imagem ja foi encontrada");
     }
   };
 
-  if (voltar) { //se voltar é verdadeiro então chamar tela iniciar
+  if (voltar) { //se voltar é verdadeiro então chama tela iniciar
     return <Iniciar />
   }
 
@@ -103,21 +116,20 @@ const App = ({dificuldade}) => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={styles.containerJogo}>
         {/* <View style={styles.countContainer}>
           <Text>nome: {name}</Text>
         </View> */}
-
-        {ImagensEmbaralhadas.map((image, index) => (
-          <View style={{flex: 1, flexDirection: "row" }}>
+        <View style={styles.containerImagens}>
+          {ImagensEmbaralhadas.map((image, index) => (
             <TouchableOpacity key={index} onPress={() => onPress(image)}>
               <Image
                 style={styles.img}
                 source={image.source}
               />
             </TouchableOpacity>
-          </View>
-        ))}
+          ))}
+        </View>
 
         <View>
           <TouchableOpacity style={styles.button} onPress={() => onPress("voltar")}>
@@ -131,24 +143,55 @@ const App = ({dificuldade}) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  containerInicial: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  containerDif: {
+    display: "flex",
     flexDirection: "row",
-    justifyContent: 'center',
-    paddingHorizontal: 10,
+    justifyContent: "space-between",
+    width: "20%",
+    marginTop: 100,
+  },
+  titulo: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  containerJogo: {
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  containerImagens: {
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap", // Permite quebrar linha
+    justifyContent: "flex-start", // Alinha as imagens no início
+    gap: 10, // Espaçamento uniforme entre as imagens
+    width: "60%", // Usa toda a largura disponível
+    padding: 10, // Adiciona um espaçamento interno
   },
   button: {
     alignItems: 'center',
     backgroundColor: '#DDDDDD',
-    padding: 10,
-  },
-  countContainer: {
-    alignItems: 'center',
-    padding: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    borderRadius: 10,
   },
   img: {
-    width: 100,
-    height: 100,
+    margin: 10,
+    width: 89,
+    height: 144.5,
+    resizeMode: "cover",
   },
 });
 
